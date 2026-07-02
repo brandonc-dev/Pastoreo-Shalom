@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asistencia — Grupo de Oración</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#12203E;
+    --navy-deep:#0B1730;
+    --gold:#C9A227;
+    --gold-soft:#E4C766;
+    --cream:#F3EEDF;
+    --ember:#C9542F;
+    --ok:#5B8C6B;
+    --line:rgba(243,238,223,0.12);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--navy-deep);color:var(--cream);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;margin:0;}
+  .app{max-width:880px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;}
+
+  header.top{padding:28px 20px 18px;border-bottom:1px solid var(--line);background:
+    radial-gradient(600px 200px at 20% -20%, rgba(201,162,39,0.18), transparent);}
+  header.top .eyebrow{letter-spacing:.14em;text-transform:uppercase;font-size:11px;color:var(--gold-soft);margin-bottom:6px;}
+  header.top h1{font-size:26px;color:var(--cream);}
+  header.top p{margin:6px 0 0;color:rgba(243,238,223,0.6);font-size:14px;}
+
+  nav.tabs{display:flex;gap:4px;padding:0 20px;border-bottom:1px solid var(--line);background:var(--navy-deep);position:sticky;top:0;z-index:5;}
+  nav.tabs button{background:none;border:none;color:rgba(243,238,223,0.55);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;padding:14px 10px;cursor:pointer;border-bottom:2px solid transparent;}
+  nav.tabs button.active{color:var(--gold-soft);border-bottom-color:var(--gold);}
+
+  main{flex:1;padding:20px;}
+  .card{background:var(--navy);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px;}
+  label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:rgba(243,238,223,0.5);margin-bottom:6px;}
+  select,input[type=date],input[type=text],input[type=password]{width:100%;background:var(--navy-deep);border:1px solid var(--line);color:var(--cream);padding:10px 12px;border-radius:8px;font-size:15px;font-family:'Inter',sans-serif;}
+  select:focus,input:focus{outline:none;border-color:var(--gold);}
+  .row{display:flex;gap:12px;flex-wrap:wrap;}
+  .row > div{flex:1;min-width:140px;}
+
+  .persona-row{display:flex;align-items:center;justify-content:space-between;padding:12px 4px;border-bottom:1px solid var(--line);}
+  .persona-row:last-child{border-bottom:none;}
+  .persona-nombre{font-size:15px;}
+  .persona-nombre small{display:block;color:rgba(243,238,223,0.45);font-size:12px;margin-top:2px;}
+  .check{width:26px;height:26px;border-radius:50%;border:2px solid var(--gold);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:15px;}
+  .check.on{background:var(--gold);color:var(--navy-deep);}
+
+  button.primary{background:var(--gold);color:var(--navy-deep);border:none;padding:12px 20px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;width:100%;margin-top:10px;}
+  button.primary:hover{background:var(--gold-soft);}
+  button.ghost{background:none;border:1px solid var(--line);color:var(--cream);padding:10px 16px;border-radius:8px;font-size:13px;cursor:pointer;}
+
+  .empty{color:rgba(243,238,223,0.45);font-size:14px;padding:20px 4px;text-align:center;}
+  .mini-note{font-size:13px;color:rgba(243,238,223,0.58);line-height:1.45;}
+  .resumen-marcados{margin-top:12px;background:rgba(201,162,39,0.08);border:1px solid rgba(201,162,39,0.25);border-radius:10px;padding:12px;color:var(--gold-soft);font-weight:700;text-align:center;}
+
+  .grupo-card h3{font-size:17px;color:var(--cream);}
+  .grupo-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer;gap:12px;}
+  .pct{font-family:'Fraunces',serif;font-size:22px;color:var(--gold-soft);white-space:nowrap;}
+  .pct-bar{height:5px;background:var(--line);border-radius:3px;margin-top:10px;overflow:hidden;}
+  .pct-bar div{height:100%;background:linear-gradient(90deg,var(--ember),var(--gold));}
+  .detalle{margin-top:14px;display:none;}
+  .detalle.open{display:block;}
+  .section-title{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--gold-soft);margin:16px 0 8px;}
+  .persona-stat,.reunion-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:9px 0;border-top:1px solid var(--line);font-size:14px;}
+  .reunion-info{flex:1;}
+  .reunion-date{font-weight:700;color:var(--cream);}
+  .reunion-list{font-size:12px;color:rgba(243,238,223,0.5);margin-top:4px;line-height:1.35;}
+  .pill{background:rgba(201,162,39,0.12);border:1px solid rgba(201,162,39,0.22);color:var(--gold-soft);padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap;}
+  .beads{display:flex;gap:3px;}
+  .bead{width:8px;height:8px;border-radius:50%;background:var(--line);}
+  .bead.on{background:var(--gold);}
+
+  .bday-card{border-left:3px solid var(--ember);}
+  .bday-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;}
+  .bday-item:last-child{border-bottom:none;}
+  .bday-day{font-family:'Fraunces',serif;color:var(--gold-soft);font-size:18px;min-width:28px;}
+
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--navy-deep);padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s;z-index:20;}
+  .toast.show{opacity:1;}
+
+  .setup-warning{margin:20px;padding:16px;border:1px solid var(--ember);border-radius:10px;background:rgba(201,84,47,0.1);font-size:14px;}
+  .setup-warning code{background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="eyebrow">Grupos de oración</div>
+    <h1 id="appTitle">Asistencia — Grupo de Oración</h1>
+    <p id="appSubtitle">Registro semanal de asistencia, cumpleaños y seguimiento por grupo.</p>
+  </header>
+
+  <nav class="tabs">
+    <button data-tab="asistencia" class="active">Tomar asistencia</button>
+    <button data-tab="personas" id="tabBtnPersonas">Personas</button>
+    <button data-tab="panel" id="tabBtnPanel">Control</button>
+  </nav>
+
+  <main id="main">
+    <div id="setupWarning" class="setup-warning" style="display:none;">
+      Falta configurar la conexión con Google Sheets. Abre <code>index.html</code> y reemplaza
+      <code>CONFIG.API_URL</code> con la URL de tu Apps Script (termina en <code>/exec</code>).
+    </div>
+
+    <!-- TAB: ASISTENCIA -->
+    <section id="tab-asistencia">
+      <div class="card" id="adminLoginCard" style="display:none;">
+        <h3 style="margin-bottom:10px;">🔒 Acceso de administración</h3>
+        <div class="mini-note" style="margin-bottom:12px;">Ingresa la clave de administración para usar el enlace general, agregar personas o ver el control.</div>
+        <label>Clave de administración</label>
+        <input type="password" id="adminPassword" placeholder="••••••">
+        <button class="primary" id="btnAdminUnlock">Entrar</button>
+      </div>
+
+      <div class="card" id="grupoBloqueadoCard" style="display:none;">
+        <div class="mini-note">Este enlace está asignado únicamente al grupo:</div>
+        <h3 id="grupoBloqueadoNombre" style="margin-top:4px;color:var(--gold-soft);"></h3>
+      </div>
+
+      <div class="card" id="grupoSelectorCard">
+        <div class="row">
+          <div id="grupoField">
+            <label>Grupo</label>
+            <select id="grupoSelect"></select>
+          </div>
+          <div>
+            <label>Fecha</label>
+            <input type="date" id="fechaInput">
+          </div>
+        </div>
+      </div>
+      <div class="card" id="listaPersonasCard">
+        <h3 style="margin-bottom:10px;">Marcar presentes</h3>
+        <div id="listaPersonas"></div>
+        <div id="resumenMarcados" class="resumen-marcados" style="display:none;"></div>
+        <button class="primary" id="btnGuardarAsistencia">Guardar asistencia</button>
+      </div>
+    </section>
+
+    <!-- TAB: PERSONAS -->
+    <section id="tab-personas" style="display:none;">
+      <div class="card">
+        <h3 style="margin-bottom:12px;">Agregar persona</h3>
+        <div class="row">
+          <div><label>Nombre</label><input type="text" id="nuevoNombre" placeholder="Nombre completo"></div>
+        </div>
+        <div class="row" style="margin-top:12px;">
+          <div><label>Cumpleaños</label><input type="date" id="nuevoCumple"></div>
+          <div id="nuevoGrupoField"><label>Grupo</label><select id="nuevoGrupo"></select></div>
+        </div>
+        <button class="primary" id="btnAgregarPersona">Agregar</button>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:10px;">Personas registradas</h3>
+        <div id="listaTodasPersonas"></div>
+      </div>
+    </section>
+
+    <!-- TAB: PANEL -->
+    <section id="tab-panel" style="display:none;">
+      <div class="card" id="lockCard">
+        <h3 style="margin-bottom:10px;">🔒 Acceso de control</h3>
+        <label>Contraseña</label>
+        <input type="password" id="panelPassword" placeholder="••••••">
+        <button class="primary" id="btnUnlock">Entrar</button>
+      </div>
+      <div id="panelContent" style="display:none;">
+        <div class="card bday-card">
+          <h3 style="margin-bottom:10px;">🎂 Cumpleaños de este mes</h3>
+          <div id="cumpleMes"></div>
+        </div>
+        <div id="panelGrupos"></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const CONFIG = {
+  // Reemplaza esta URL por la de tu implementación de Apps Script (termina en /exec)
+  API_URL: "https://script.google.com/macros/s/AKfycbyRYeHRHAm0yINwx2SUIriTMBFac8hE98sXcGt1qU11WMV4gGQf3GKsGOmOV2CsxLU/exec"
+};
+
+const URL_PARAMS = new URLSearchParams(window.location.search);
+const GRUPO_FIJO = URL_PARAMS.get('grupo');
+const GRUPO_CLAVE = URL_PARAMS.get('clave') || '';
+const MODO_GRUPO = !!GRUPO_FIJO;
+const ADMIN_SESSION_KEY = 'oracion_admin_clave';
+
+let GRUPOS = [];
+let personasCache = [];
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+function getAdminClave(){
+  return sessionStorage.getItem(ADMIN_SESSION_KEY) || '';
+}
+
+function adminDesbloqueado(){
+  return !!getAdminClave();
+}
+
+function aplicarCredencialesGet(action, params={}){
+  const salida = {...params};
+
+  if(MODO_GRUPO && salida.grupo === GRUPO_FIJO && !salida.clave){
+    salida.clave = GRUPO_CLAVE;
+  }
+
+  if(!MODO_GRUPO && adminDesbloqueado() && action !== 'getGrupos' && action !== 'checkAdmin' && action !== 'checkGrupo'){
+    salida.adminClave = getAdminClave();
+  }
+
+  return salida;
+}
+
+function aplicarCredencialesPost(body={}){
+  const salida = {...body};
+
+  if(MODO_GRUPO && salida.grupo === GRUPO_FIJO && !salida.clave){
+    salida.clave = GRUPO_CLAVE;
+  }
+
+  if(!MODO_GRUPO && adminDesbloqueado() && !salida.adminClave){
+    salida.adminClave = getAdminClave();
+  }
+
+  return salida;
+}
+
+async function apiGet(action, params={}){
+  const url = new URL(CONFIG.API_URL);
+  url.searchParams.set('action', action);
+  const authParams = aplicarCredencialesGet(action, params);
+  Object.entries(authParams).forEach(([k,v])=>url.searchParams.set(k,v));
+  const res = await fetch(url);
+  const data = await res.json();
+  if(data && data.error) throw new Error(data.error);
+  return data;
+}
+
+async function apiPost(body){
+  const res = await fetch(CONFIG.API_URL, {
+    method: 'POST',
+    headers: {'Content-Type':'text/plain;charset=utf-8'},
+    body: JSON.stringify(aplicarCredencialesPost(body))
+  });
+  const data = await res.json();
+  if(data && data.error) throw new Error(data.error);
+  return data;
+}
+
+function fmtFechaHoy(){
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+
+function escaparHtml(txt){
+  return String(txt ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+
+function getGrupoActual(){
+  return MODO_GRUPO ? GRUPO_FIJO : document.getElementById('grupoSelect').value;
+}
+
+// ---------- Tabs ----------
+document.querySelectorAll('nav.tabs button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    if(!MODO_GRUPO && !adminDesbloqueado() && btn.dataset.tab !== 'asistencia'){
+      toast('Primero ingresa la clave de administración');
+      document.querySelector('nav.tabs button[data-tab="asistencia"]').classList.add('active');
+      return;
+    }
+
+    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    ['asistencia','personas','panel'].forEach(t=>{
+      document.getElementById('tab-'+t).style.display = (t===btn.dataset.tab) ? 'block' : 'none';
+    });
+    if(btn.dataset.tab === 'personas') renderListaTodasPersonas();
+    if(btn.dataset.tab === 'panel') showPanelTab();
+  });
+});
+
+function showPanelTab(){
+  const unlocked = MODO_GRUPO || adminDesbloqueado();
+  document.getElementById('lockCard').style.display = unlocked ? 'none' : 'block';
+  document.getElementById('panelContent').style.display = unlocked ? 'block' : 'none';
+  if(unlocked) renderPanel();
+}
+
+document.getElementById('btnUnlock').addEventListener('click', ()=>intentarDesbloquear('panelPassword'));
+document.getElementById('panelPassword').addEventListener('keydown', e=>{
+  if(e.key === 'Enter') intentarDesbloquear('panelPassword');
+});
+document.getElementById('btnAdminUnlock').addEventListener('click', ()=>intentarDesbloquear('adminPassword'));
+document.getElementById('adminPassword').addEventListener('keydown', e=>{
+  if(e.key === 'Enter') intentarDesbloquear('adminPassword');
+});
+
+async function intentarDesbloquear(inputId){
+  const input = document.getElementById(inputId);
+  const val = input.value.trim();
+  if(!val){ toast('Falta la clave'); return; }
+
+  try{
+    await apiGet('checkAdmin', {adminClave: val});
+    sessionStorage.setItem(ADMIN_SESSION_KEY, val);
+    document.getElementById('panelPassword').value = '';
+    document.getElementById('adminPassword').value = '';
+    toast('Acceso habilitado ✓');
+    refrescarVistaAdmin();
+    await loadPersonasYListado();
+    showPanelTab();
+  }catch(err){
+    toast('Clave incorrecta');
+    console.error(err);
+  }
+}
+
+function refrescarVistaAdmin(){
+  const pedirClave = !MODO_GRUPO && !adminDesbloqueado();
+  document.getElementById('adminLoginCard').style.display = pedirClave ? 'block' : 'none';
+  document.getElementById('grupoSelectorCard').style.display = pedirClave ? 'none' : 'block';
+  document.getElementById('listaPersonasCard').style.display = pedirClave ? 'none' : 'block';
+}
+
+// ---------- Init ----------
+async function init(){
+  if(!CONFIG.API_URL || CONFIG.API_URL.includes('PEGA_AQUI')){
+    document.getElementById('setupWarning').style.display = 'block';
+    return;
+  }
+
+  try{
+    document.getElementById('fechaInput').value = fmtFechaHoy();
+    GRUPOS = await apiGet('getGrupos');
+    fillGrupoSelects();
+
+    if(MODO_GRUPO){
+      if(!GRUPOS.includes(GRUPO_FIJO)){
+        document.getElementById('listaPersonas').innerHTML = `<div class="empty">El grupo "${escaparHtml(GRUPO_FIJO)}" no existe. Revisa que el nombre esté escrito igual que en Apps Script.</div>`;
+        return;
+      }
+      await apiGet('checkGrupo', {grupo: GRUPO_FIJO, clave: GRUPO_CLAVE});
+      activarModoGrupo();
+      await loadPersonasYListado();
+      return;
+    }
+
+    refrescarVistaAdmin();
+    if(adminDesbloqueado()){
+      await loadPersonasYListado();
+    }
+  }catch(err){
+    document.getElementById('setupWarning').style.display = 'block';
+    document.getElementById('setupWarning').innerHTML = 'Error de conexión/acceso: ' + escaparHtml(err.message);
+    document.getElementById('grupoSelectorCard').style.display = 'none';
+    document.getElementById('listaPersonasCard').style.display = 'none';
+  }
+}
+
+function fillGrupoSelects(){
+  ['grupoSelect','nuevoGrupo'].forEach(id=>{
+    const sel = document.getElementById(id);
+    sel.innerHTML = GRUPOS.map(g=>`<option value="${escaparHtml(g)}">${escaparHtml(g)}</option>`).join('');
+  });
+}
+
+function activarModoGrupo(){
+  document.getElementById('adminLoginCard').style.display = 'none';
+  document.getElementById('grupoSelect').value = GRUPO_FIJO;
+  document.getElementById('nuevoGrupo').value = GRUPO_FIJO;
+  document.getElementById('grupoField').style.display = 'none';
+  document.getElementById('nuevoGrupoField').style.display = 'none';
+  document.getElementById('tabBtnPersonas').style.display = 'block';
+  document.getElementById('tabBtnPanel').style.display = 'block';
+  document.getElementById('grupoBloqueadoCard').style.display = 'block';
+  document.getElementById('grupoBloqueadoNombre').textContent = GRUPO_FIJO;
+  document.getElementById('appTitle').textContent = 'Asistencia — ' + GRUPO_FIJO;
+  document.getElementById('appSubtitle').textContent = 'Marca asistencia, agrega personas y revisa el control solo de este grupo.';
+}
+
+// ---------- Tomar asistencia ----------
+async function loadPersonasYListado(){
+  const grupo = getGrupoActual();
+  const fecha = document.getElementById('fechaInput').value;
+  const [personas, asistencia] = await Promise.all([
+    apiGet('getPersonas', {grupo}),
+    apiGet('getAsistencia', {grupo, fecha})
+  ]);
+  const presentesIds = new Set(asistencia.filter(a=>a.presente).map(a=>a.personaId));
+
+  const cont = document.getElementById('listaPersonas');
+  if(personas.length === 0){
+    cont.innerHTML = '<div class="empty">Sin personas en este grupo todavía. Agrégalas desde la pestaña "Personas".</div>';
+    document.getElementById('resumenMarcados').style.display = 'none';
+    return;
+  }
+  cont.innerHTML = personas.map(p => `
+    <div class="persona-row" data-id="${escaparHtml(p.id)}">
+      <div class="persona-nombre">${escaparHtml(p.nombre)}<small>${escaparHtml(p.cumpleanos || '')}</small></div>
+      <button class="check ${presentesIds.has(p.id)?'on':''}" data-id="${escaparHtml(p.id)}">✓</button>
+    </div>
+  `).join('');
+
+  cont.querySelectorAll('.check').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      btn.classList.toggle('on');
+      actualizarResumenMarcados();
+    });
+  });
+  actualizarResumenMarcados();
+}
+
+function actualizarResumenMarcados(){
+  const filas = Array.from(document.querySelectorAll('#listaPersonas .persona-row'));
+  const presentes = filas.filter(row => row.querySelector('.check').classList.contains('on')).length;
+  const total = filas.length;
+  const resumen = document.getElementById('resumenMarcados');
+  resumen.style.display = total ? 'block' : 'none';
+  resumen.textContent = `Presentes marcados: ${presentes} de ${total}`;
+}
+
+document.getElementById('grupoSelect').addEventListener('change', loadPersonasYListado);
+document.getElementById('fechaInput').addEventListener('change', loadPersonasYListado);
+
+document.getElementById('btnGuardarAsistencia').addEventListener('click', async ()=>{
+  const grupo = getGrupoActual();
+  const fecha = document.getElementById('fechaInput').value;
+  const registros = Array.from(document.querySelectorAll('#listaPersonas .persona-row')).map(row=>({
+    personaId: row.dataset.id,
+    presente: row.querySelector('.check').classList.contains('on')
+  }));
+  try{
+    const r = await apiPost({action:'saveAsistencia', grupo, fecha, registros});
+    toast(`Guardado: ${r.presentes} presentes de ${r.guardados}`);
+    actualizarResumenMarcados();
+  }catch(err){
+    toast('No se pudo guardar');
+    console.error(err);
+  }
+});
+
+// ---------- Personas ----------
+document.getElementById('btnAgregarPersona').addEventListener('click', async ()=>{
+  const nombre = document.getElementById('nuevoNombre').value.trim();
+  const cumpleanos = document.getElementById('nuevoCumple').value;
+  const grupo = MODO_GRUPO ? GRUPO_FIJO : document.getElementById('nuevoGrupo').value;
+  if(!nombre){ toast('Falta el nombre'); return; }
+  try{
+    await apiPost({action:'addPersona', nombre, cumpleanos, grupo});
+    document.getElementById('nuevoNombre').value = '';
+    document.getElementById('nuevoCumple').value = '';
+    toast('Persona agregada ✓');
+    renderListaTodasPersonas();
+    loadPersonasYListado();
+  }catch(err){
+    toast('No se pudo agregar');
+    console.error(err);
+  }
+});
+
+async function renderListaTodasPersonas(){
+  personasCache = await apiGet('getPersonas', MODO_GRUPO ? {grupo: GRUPO_FIJO} : {});
+  const cont = document.getElementById('listaTodasPersonas');
+  if(personasCache.length === 0){
+    cont.innerHTML = '<div class="empty">Todavía no hay personas registradas.</div>';
+    return;
+  }
+  const porGrupo = {};
+  personasCache.forEach(p=>{ (porGrupo[p.grupo] = porGrupo[p.grupo]||[]).push(p); });
+  cont.innerHTML = Object.entries(porGrupo).map(([grupo, lista])=>`
+    <div style="margin-bottom:14px;">
+      <div style="color:var(--gold-soft);font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">${escaparHtml(grupo)}</div>
+      ${lista.map(p=>`<div class="persona-row"><div class="persona-nombre">${escaparHtml(p.nombre)}<small>${escaparHtml(p.cumpleanos||'Sin fecha')}</small></div></div>`).join('')}
+    </div>
+  `).join('');
+}
+
+// ---------- Panel coordinadora ----------
+async function renderPanel(){
+  const params = MODO_GRUPO ? {grupo: GRUPO_FIJO} : {};
+  const [control, cumples] = await Promise.all([
+    apiGet('getControlAsistencia', params),
+    apiGet('getCumpleanosMes', params)
+  ]);
+
+  const cumpleCont = document.getElementById('cumpleMes');
+  cumpleCont.innerHTML = cumples.length === 0
+    ? '<div class="empty">Nadie cumple años este mes.</div>'
+    : cumples.map(c => `<div class="bday-item"><div><span class="bday-day">${c.dia}</span> &nbsp;${escaparHtml(c.nombre)} <small style="color:rgba(243,238,223,0.4)">— ${escaparHtml(c.grupo)}</small></div></div>`).join('');
+
+  const cont = document.getElementById('panelGrupos');
+  cont.innerHTML = control.map((g, idx) => `
+    <div class="card grupo-card">
+      <div class="grupo-head" data-idx="${idx}">
+        <div>
+          <h3>${escaparHtml(g.grupo)}</h3>
+          <div style="color:rgba(243,238,223,0.45);font-size:13px;margin-top:2px;">${g.totalPersonas} personas · ${g.totalSesiones} reuniones registradas</div>
+        </div>
+        <div class="pct">${g.porcentajeGrupo}%</div>
+      </div>
+      <div class="pct-bar"><div style="width:${g.porcentajeGrupo}%"></div></div>
+      <div class="detalle" id="detalle-${idx}">
+        <div class="section-title">Asistencia por día</div>
+        ${g.sesiones.length === 0 ? '<div class="empty">Todavía no hay reuniones registradas.</div>' : g.sesiones.map(s => `
+          <div class="reunion-row">
+            <div class="reunion-info">
+              <div class="reunion-date">${escaparHtml(s.fechaMostrar || s.fecha)}</div>
+              <div class="reunion-list"><b>Asistieron:</b> ${s.asistieron.length ? escaparHtml(s.asistieron.join(', ')) : 'Nadie marcado'}</div>
+              <div class="reunion-list"><b>Faltaron:</b> ${s.faltaron.length ? escaparHtml(s.faltaron.join(', ')) : 'Nadie'}</div>
+            </div>
+            <div class="pill">${s.presentes}/${s.total} · ${s.porcentaje}%</div>
+          </div>
+        `).join('')}
+
+        <div class="section-title">Lista de personas del grupo</div>
+        ${g.personas.length === 0 ? '<div class="empty">Sin personas todavía.</div>' : g.personas.map(p => `
+          <div class="persona-stat">
+            <div>${escaparHtml(p.nombre)}</div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="pill">${p.presentes}/${p.totalSesiones} · ${p.porcentaje}%</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  cont.querySelectorAll('.grupo-head').forEach(head=>{
+    head.addEventListener('click', ()=>{
+      document.getElementById('detalle-'+head.dataset.idx).classList.toggle('open');
+    });
+  });
+}
+
+init();
+</script>
+</body>
+</html>
